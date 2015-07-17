@@ -94,8 +94,9 @@ class output  {
     <meta name='Keywords' content='{$s["keywords"]}' />
     <meta name='Author' content='{$s["author"]}' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>{$title}</title>
     <meta name='robots' content='all, index, follow' />
+    <meta name='google-site-verification' content='pCY1QQhzoMnnmAsePaPyCIXdoB8pQmwoy1dTMcs1qgY' />
+    <title>{$title}</title>
     {$head}
     <link rel='icon' href='favicon.png' />
   </head>
