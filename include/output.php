@@ -86,6 +86,8 @@ class output  {
     # process nav links
     $links = "";
     if(is_array($s["nav"]))  {
+      $count = count($s["nav"]);
+      $width = 100/$count;
       foreach($s["nav"] as $pages)  {
         if(is_array($pages))  {
           $i = 1;

@@ -45,7 +45,7 @@ $settings["nav"] = array(
   array("@tools", "locale", "ini2json"),
 );
 
-$settings["css"][] = "/style.css";
+#$settings["css"][] = "/style.css";
 #$settings["js"][] = ;
 #$settings["head"][] = "<script src='script.js'></script>";
 #$settings["head"][] = "<script src='script/jquery.mobile.custom.min.js";
