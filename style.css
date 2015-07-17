@@ -58,7 +58,7 @@ a {
   /*transition: color 0.2s ease-in-out;*/
 }
 a:hover{
-  color: rgba(0, 0, 100, .8);
+  color: rgba(0, 0, 150, .8);
 }
 .b  {
   font-weight: bold;
@@ -97,13 +97,13 @@ a:hover{
   color: inherit;
   text-decoration: underline;
 }
-.success { /* grün */
+.success { /* green */
   color: #3c763d;
   background: #dff0d8;
   background: linear-gradient(to bottom, #dff0d8 0, #c8e5bc 100%);
   border-color: #b2dba1;
 }
-.info  { /* blau */
+.info  { /* blue */
   color: #31708f;
   background: #d9edf7;
   background: linear-gradient(to bottom, #d9edf7 0, #b9def0 100%);
@@ -259,7 +259,8 @@ header nav ul li a.active {
 
 /* Cascaded Menu */
 /*
-header nav ul $li ul  {  Select li which has a ul inside 
+header nav ul $li ul  {
+  Select li which has a ul inside
    workaround needed (CSS 4 is not yet working) 
 }
 */
@@ -276,7 +277,7 @@ header nav ul li ul {
 }
 header nav ul li:hover ul{
   height: auto;
-  max-height: 500px; /* use bug with higher value as workaround for delay */
+  max-height: 800px; /* use bug with higher value as workaround for delay */
 }
 header nav ul li ul li{
   width: 100%;
@@ -463,6 +464,8 @@ section.jumbotron .slideshow {
   overflow: hidden;
 }
 
+
+
 @media screen {
   header .top, header nav, section, footer, article, .slideshow  {
     width: 100%;
@@ -536,7 +539,6 @@ section.jumbotron .slideshow {
     width: 50%; /* 2 (500)*/
   }
 }
-
 
 
                     /*************************/
@@ -621,8 +623,18 @@ table.information tr td:first-child  {
 form  {
   
 }
-form > table  {
-  width: 60%;
+form > input, form > textarea  {
+  display: block;
+  margin: 5px 0px;
+  height: auto;
+  width: 100%;
+}
+form > textarea {
+  height: 200px;
+}
+form > table input[type="checkbox"] {
+  display: inline-block;
+  width: 20px;
 }
 form > table input, form > table textarea, form > table select {
   display: block;
@@ -631,10 +643,6 @@ form > table input, form > table textarea, form > table select {
   box-sizing: border-box;
   width: 100%;
 } 
-form > table input[type="checkbox"] {
-  display: inline-block;
-  width: 20px;
-}
 form > table textarea {
   height: 180px;
 }

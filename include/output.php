@@ -15,9 +15,12 @@ class output  {
     $s["subtitle"]  = "";
 
     $s["keywords"]  = "";
-    $s["head"]      = array();
+    $s["css"]       = array();
+    $s["js"]        = array();
     
     $s["page"]      = "";
+    
+    $s["startpage"] = "home";
     
     $s["hidenav"]   = false;
     
@@ -38,6 +41,16 @@ class output  {
     $this->content["body"] .= $text;
   }
   
+  public function addCSS($link) {
+    if($link)
+      $this->settings["css"][] = $link;
+  }
+  
+  public function addJS($link) {
+    if($link)
+      $this->settings["js"][] = $link;
+  }
+  
   public function setFooter($footer)  {
     $this->content["footer"] = $footer;
   }
@@ -47,11 +60,15 @@ class output  {
   }
   
   private function NavLink($page, $text)  {
-    if(!$page)  $page = "home";
+    $url = $this->settings["url"];
     if($this->settings["page"] == $page)
       $class = " class='active'";
-    else  $class = "";
-    $href = ($page==$this->settings["startpage"])?"./":"".$page.".html";
+    else
+      $class = "";
+    if($page{0} == "@")
+      $href = "#";
+    else
+      $href = ($page == $this->settings["startpage"])?$url:$url.$page.".html";
     return "<a href='{$href}'{$class}>{$text}</a>";
   }
   
@@ -62,8 +79,10 @@ class output  {
     # title
     $title = $s["title"]?$s["site"]." - ".$s["title"]:$s["site"];
     # header files
-    $head = ""; foreach($s["head"] as $file)
-      $head = $head."\n      ".$file;
+    $css = ""; foreach($s["css"] as $file)
+      $css = $css."\n    <link rel='stylesheet' type='text/css' href='{$file}' />";
+    $js = ""; foreach($s["js"] as $file)
+      $js = $js."\n      <script src='{$file}'></script>";
     # process nav links
     $links = "";
     if(is_array($s["nav"]))  {
@@ -97,7 +116,10 @@ class output  {
     <meta name='robots' content='all, index, follow' />
     <meta name='google-site-verification' content='pCY1QQhzoMnnmAsePaPyCIXdoB8pQmwoy1dTMcs1qgY' />
     <title>{$title}</title>
-    {$head}
+    <link rel='stylesheet' type='text/css' href='{$this->settings["url"]}style.css' />
+    {$css}
+    <script src='//code.jquery.com/jquery-1.11.2.min.js'></script>
+    {$js}
     <link rel='icon' href='favicon.png' />
   </head>
   

@@ -26,7 +26,7 @@ $settings["pages"] = array(
   "locale"    => "Localizations",
   "ini2json"  => "ini-to-json",
   "error"     => "Error",
-  "#tools"    => "Tools",
+  "@tools"    => "Tools",
 );
 $settings["subtitles"] = array(
   "info"      => "",
@@ -42,15 +42,13 @@ $settings["nav"] = array(
   array("info"),
   array("download"),
   array("changelog"),
-  array("#tools", "locale", "ini2json"),
+  array("@tools", "locale", "ini2json"),
 );
 
-// js scripts
-$settings["head"][] = "<script src='//code.jquery.com/jquery-1.11.2.min.js'></script>";
+$settings["css"][] = "/style.css";
+#$settings["js"][] = ;
 #$settings["head"][] = "<script src='script.js'></script>";
 #$settings["head"][] = "<script src='script/jquery.mobile.custom.min.js";
-// css scripts
-$settings["head"][] = "<link rel='stylesheet' type='text/css' href='style.css' />";
 
 /*  JSON for general settings
 $json = json_encode($settings, JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);

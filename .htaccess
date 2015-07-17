@@ -1,10 +1,16 @@
 RewriteEngine on
 Options       +FollowSymLinks
 
-RewriteBase		/       
-RewriteRule		^(.+)\.(.+)\.html$   index.php?page=$1&mode=$2&%{QUERY_STRING} [NC]
+# Deny access to sub directory
+RedirectMatch 403 ^page$
+
+RewriteBase		/      
+RewriteRule		^(.+)\.(.+)\.html$  index.php?page=$1&mode=$2&%{QUERY_STRING} [NC]
 RewriteRule		^(.+)\.html$        index.php?page=$1&%{QUERY_STRING} [NC]
 
+ErrorDocument 401 /error.401.html
+ErrorDocument 403 /error.403.html
+ErrorDocument 404 /error.404.html
 
 <IfModule mod_deflate.c>
   # Compress HTML, CSS, JavaScript, Text, XML and fonts
