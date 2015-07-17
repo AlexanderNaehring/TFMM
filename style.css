@@ -578,7 +578,7 @@ table {
   margin: 5px auto;
 }
 td, th  {
-  padding: 5px;
+  padding: 2px;
   text-align: left;
   border: none;
   vertical-align: top;
@@ -624,32 +624,84 @@ table.information tr td:first-child  {
 form  {
   
 }
-form > input, form > textarea  {
-  display: block;
-  margin: 5px 0px;
-  height: auto;
-  width: 100%;
-}
 form > textarea {
   height: 200px;
+}
+form > table  {
+  min-width: 250px;
 }
 form > table input[type="checkbox"] {
   display: inline-block;
   width: 20px;
 }
-form > table input, form > table textarea, form > table select {
+form table input, form table textarea, form table select {
   display: block;
   margin: 0px auto;
   padding: 3px 1px;
   box-sizing: border-box;
   width: 100%;
+  font-size: 1em;
 } 
 form > table textarea {
   height: 180px;
 }
-form label:first-child  {
-  font-weight: bold;
+form label  {
   cursor: pointer;
+}
+
+                    /*************************/
+                    /*         TABLE         */ 
+                    /*************************/
+
+table {
+  width: 100%;
+  max-width: 100%;
+  min-width: 250px;
+  background: rgba(255, 255, 255, .8);
+  border-collapse: collapse;
+  border-spacing: 0px;
+  border: none;
+  padding: 0px;
+  margin: 5px auto;
+}
+td, th  {
+  padding: 5px;
+  text-align: left;
+  border: none;
+  vertical-align: top;
+}
+td  {
+}
+th  {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+tr {
+  border: none;
+}
+table.table {
+  border: 1px solid;
+  border-color: rgba(0, 0, 0, .5);
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, .4);
+}
+table.table tr:not(:last-child) {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+  border-color: rgba(0, 0, 0, .2);
+}
+table.table > tr:first-child > th {
+  /* background:  linear-gradient(rgba(255,165,0,0.2), rgba(255,165,0,0.8), rgba(255,165,0,0.8), rgba(255,165,0,0.3)); */
+}
+table.table tr:nth-child(even) td, table.table tr:nth-child(even) th  {  /* :not(form) > */
+  background: rgba(0, 0, 0, .1);
+}
+table.table tr:hover td, table.table tr:hover th  {
+  background: rgba(0, 0, 0, .2) !important;
+}
+table.information tr td:first-child  {
+  width: 30%;
+  font-weight: bold;
 }
 
                     /*************************/
@@ -674,41 +726,41 @@ form label:first-child  {
   font-size: 1.1em;
   vertical-align: middle;
   
-  transition-property: color, background, box-shadow, transform;
-  transition-duration: .3s;
+  /*transition-property: color, background, box-shadow, transform;*/
+  transition-duration: .2s;
   transition-timing-function: ease-in-out;
 }
 .downloads > a:hover {
   color: inherit;
   transform: translate(0px, 2px);
 }
-/* image float fix -> alternatively use line-height */
+/* float fix -> alternatively use line-height */
 .downloads > a:after {
   content: "";
   display: block;
   clear: both;
 }
 
-.downloads.stable > a {
+.downloads > a.stable {
   color: #3c763d;
   background: #dff0d8;
   border-color: #b2dba1;
   background: linear-gradient(to bottom, #dff0d8 0%, #c8e5bc 100%);
   box-shadow: 0px 4px 0px #b2dba1, 0px 4px 10px #aaa;
 }
-.downloads.stable > a:hover {
+.downloads > a.stable:hover {
   background: #dff0d8;
   background: linear-gradient(to bottom, #c8e5bc 0%, #dff0d8 100%);
   box-shadow: 0px 2px 0px #b2dba1, 0px 2px 10px #aaa;
 }
-.downloads.unstable > a {
+.downloads > a.unstable {
   color: #8a6d3b;
   background: #fcf8e3;
   border-color: #f5e79e;
   background: linear-gradient(to bottom, #fcf8e3 0%, #f8efc0 100%);
   box-shadow: 0px 4px 0px #f5e79e, 0px 4px 10px #aaa;
 }
-.downloads.unstable > a:hover {
+.downloads > a.unstable:hover {
   background: #fcf8e3;
   background: linear-gradient(to bottom, #f8efc0 0%, #fcf8e3 100%);
   box-shadow: 0px 2px 0px #f5e79e, 0px 2px 10px #aaa;
@@ -722,6 +774,16 @@ form label:first-child  {
   display: block;
 }
 
+
+.downloads.archive {
+  text-align: left;
+}
+.downloads.archive > a {
+  margin: 5px 5px 15px 5px;
+  display: inline-block;
+}
+
+
 @media (min-width: 1050px) {
   /* content width: 1000px; */
   .downloads {
@@ -729,12 +791,33 @@ form label:first-child  {
   }
   .downloads > a {
     display: inline-block;
-    margin: 5px 8px;
+    margin: 5px;
   }
+  /*
   .downloads > a:first-child {
     margin-left: 0px;
   }
   .downloads > a:last-child {
     margin-right: 0px;
   }
+  */
+}
+
+
+                    /*************************/
+                    /*         MISC          */
+                    /*************************/
+.slideButton {
+  cursor: pointer;
+}
+.slideButton::before {
+  /*content: "Show ";*/
+}
+.slideButton + div {
+  /*display: none;*/
+}
+
+.archive_filter {
+  width: 100%;
+  text-align: right;
 }

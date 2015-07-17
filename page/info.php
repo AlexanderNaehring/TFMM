@@ -1,14 +1,12 @@
 <?php
 
-$out->addBody("
+echo "
 <article>
 <img src='favicon.png' style='float: right; max-width: 250px; min-width: 100px; width: 33%; shape-outside: url(favicon.png);' />
 <h1>What is TFMM</h1>
 <p>
-  TFMM is an acronym standing for <strong>T</strong>rain <strong>F</strong>ever <strong>M</strong>od <strong>M</strong>anager.
-  This Program can be used on Windows, Mac OS X and Linux in order to manage the installed
-  or even to download new modifications for the game <a href='http://www.train-fever.com'>Train Fever</a>
-  by Swiss developers <a href='http://www.train-fever.com/about/urban-games/'>Urban Games</a>.
+  Train Fever Mod Manager, or short TFMM, can can be used on Windows, Linux and Mac OS X in order to manage the installed modifications for the game <a href='http://www.train-fever.com'>Train Fever</a> by Swiss developers <a href='http://www.train-fever.com/about/urban-games/'>Urban Games</a>.
+  As of version 1.0 the program can even be used to download new modifications and synchronize the local mods with the online database.
 </p>
 </article>
 <article>
@@ -46,10 +44,10 @@ $out->addBody("
   The program also aims to give you as much information and control about the mods installed in your game as possible.
 </p>
 <p>
-  As of July 2015, TFMM is still under development but save to use. Stay tuned for further updates.
+  As of July 2015, TFMM is still under development but safe to use. Stay tuned for further updates.
 </p>
 </article>
-");
+";
 
 
 ?>

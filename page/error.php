@@ -20,12 +20,12 @@ switch($_GET["mode"]) {
 }
 
 header($header);
-$out->addBody("
+echo "
 <article>
   <h1>{$h}</h1>
   <p>
     {$p}
   </p>
-</article>");
+</article>";
 
 ?>

@@ -64,7 +64,7 @@ if($_POST["ini2json"])  {
   $json = str_replace("\n", "<br/>", $json);
 }
 
-$out->addBody("
+echo "
 <article>
   <h1>INI to JSON Converter</h1>
   <p>This tool can be used to convert INI files into a JSON format.</p>
@@ -75,7 +75,6 @@ $out->addBody("
     ".($json?"<code class='box' style='overflow: auto;'>{$json}</code>":"")."
   </form>
   
-  
-</article>");
+</article>";
 
 ?>
