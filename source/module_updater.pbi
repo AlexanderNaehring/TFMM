@@ -4,7 +4,8 @@ XIncludeFile "module_locale.pbi"
 DeclareModule updater
   EnableExplicit
   
-  #VERSION$ = "Version 0.9." + #PB_Editor_BuildCount + " Build " + #PB_Editor_CompileCount + " (Testing)"
+  #CHANNEL = "Testing"
+  #VERSION$ = "Version 0.9." + #PB_Editor_BuildCount + " Build " + #PB_Editor_CompileCount + " ("+#CHANNEL+")"
   
   CompilerSelect #PB_Compiler_OS
     CompilerCase #PB_OS_Windows
@@ -104,8 +105,12 @@ Module updater
               SetGadgetText(gadgets("status"), locale::l("updater", "retrieved"))
               SetGadgetColor(gadgets("status"), #PB_Gadget_FrontColor, -1)
               If GetGadgetText(gadgets("channel")) = ""
-                ; if no channel is selected, switch to stable channel
-                SetGadgetText(gadgets("channel"), "Stable")
+                ; if no channel is selected, switch to current channel
+                If FindMapElement(channel(), LCase(#CHANNEL))
+                  SetGadgetText(gadgets("channel"), #CHANNEL)
+                Else
+                  SetGadgetText(gadgets("channel"), "Stable")
+                EndIf
               EndIf
               
               ; update window content (version, filename, etc)
