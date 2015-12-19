@@ -7,6 +7,7 @@ Module images
   EnableExplicit
   
   Procedure LoadImages()
+    debugger::Add("images::loadImages()")
     Images("headermain")  = CatchImage(#PB_Any, ?DataImageHeader, ?DataImageHeaderEnd - ?DataImageHeader)
     Images("headerinfo")  = CatchImage(#PB_Any, ?DataImageHeader, ?DataImageHeaderEnd - ?DataImageHeader)
     Images("yes")         = CatchImage(#PB_Any, ?DataImageYes,    ?DataImageYesEnd - ?DataImageYes)
@@ -41,8 +42,3 @@ Module images
     DataImageLogoEnd:
   EndDataSection
 EndModule
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 15
-; Folding = -
-; EnableUnicode
-; EnableXP

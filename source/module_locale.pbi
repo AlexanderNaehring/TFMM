@@ -9,11 +9,16 @@ EndMacro
 DeclareModule locale
   EnableExplicit
   
+  Macro l(g,s)
+    locale::get(g,s)
+  EndMacro
+  
   Declare listAvailable(ComboBoxGadget, current_locale$)
   Declare use(new_locale$)
   Declare.s getEx(group$, string$, Map var$())
   Declare.s get(group$, string$)
   Declare getFlag(locale$)
+  Declare.s getCurrentLocale()
 EndDeclareModule
 
 Module locale
@@ -152,7 +157,7 @@ Module locale
       If out$ = ""
         debugger::Add("locale:: failed to load fallback for '"+key$+"'")
         out$ = "<"+key$+">"
-        If group$ = "category"
+        If group$ = "category" Or group$ = "tags"
           out$ = string$
         EndIf
       EndIf
@@ -187,7 +192,7 @@ Module locale
     OpenPreferences(path$ + locale$ + ".locale")
     flag$ = ReadPreferenceString("flag", "")
     If flag$ = ""
-      debugger::Add("locale::getFlag() - no hex found")
+      debugger::Add("locale::getFlag() - no hex found in locale file")
       If FileSize(path$ + locale$ + ".png")
         flag$ = misc::FileToHexStr(path$ + locale$ + ".png")
 ;         DeleteFile(path$ + locale$ + ".png")
@@ -195,7 +200,7 @@ Module locale
 ;         WritePreferenceString("flag", flag$)
       EndIf
     Else
-      DeleteFile(path$ + locale$ + ".png")
+;       DeleteFile(path$ + locale$ + ".png")
     EndIf
     ClosePreferences()
     
@@ -209,10 +214,13 @@ Module locale
     
     If im
       flag(locale$) = misc::ResizeCenterImage(im, 20, 20)
-      FreeImage(im)
       ProcedureReturn ImageID(flag(locale$))
     EndIf
     ProcedureReturn 0
+  EndProcedure
+  
+  Procedure.s getCurrentLocale()
+    ProcedureReturn current_locale$
   EndProcedure
   
   DataSection
@@ -225,10 +233,3 @@ Module locale
     DataLocaleGermanEnd:
   EndDataSection
 EndModule
-
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 196
-; FirstLine = 31
-; Folding = H5
-; EnableUnicode
-; EnableXP

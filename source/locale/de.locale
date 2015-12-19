@@ -1,7 +1,8 @@
 ﻿; standard file, will be overwritten each time TFMM starts
 locale      = Deutsch
 translator  = Xanos
-flag        = 89504E470D0A1A0A0000000D49484452000000050000000308060000005B36C5F800000006624B474400FF00FF00FFA0BDA793000000097048597300000EC400000EC401952B0E1B0000000774494D4507DE0C1E11103B77FB28600000001A4944415408D763646060F8CF800658EE326002C6FFE730550200938A04AFC7D1662F0000000049454E44AE426082
+flag        = 89504E470D0A1A0A0000000D494844520000001A00000010080600000008D16FA8000000017352474200AECE1CE90000000467414D410000B18F0BFC6105000000097048597300000EC400000EC401952B0E1B00000006624B474400FF00FF00FFA0BDA7930000000774494D4507DE0C1210282B36C751700000003E49444154384F63646060F80FC434074C509AE660D422B201E31C3A2506C667F4B2E8EE704BDE8CB7E916473674B2E8FF7D7A59746E982586E16611030300A16F101890BFC8630000000049454E44AE426082
+version     = 1740
 
 [menu]
 file              = Datei
@@ -18,6 +19,8 @@ update            = Aktualisiere TFMM
 license           = Lizenz
 
 [main]
+mods            = Modifikationen
+dlcs            = Herunterladbare Inhalte (DLC)
 name            = Name
 author          = Ersteller
 category        = Kategorie
@@ -26,13 +29,16 @@ new_mod         = Neue Mod
 download        = Download Mods
 start_tf        = Starte Train Fever
 management      = Mod Verwaltung
-activate        = Aktiviere Modifikation
-activate_pl     = Aktiviere Modifikationen
-deactivate      = Deaktiviere Modifikation
-deactivate_pl   = Deaktiviere Modifikationen
-uninstall       = Lösche Modifikation
-uninstall_pl    = Lösche Modifikationen
+install         = Füge Mod in Train Fever ein
+install_pl      = Füge Mods in Train Fever ein
+remove          = Lösche Mod aus Train Fever
+remove_pl       = Lösche Mods aus Train Fever
+delete          = Lösche Mod aus TFMM
+delete_pl       = Lösche Mods aus TFMM
 information     = Informationen
+filter          = Filter Modifikationen
+install_dlc     = Füge DLC in Train Fever ein
+remove_dlc      = Lösche DLC aus Train Fever
 
 [settings]
 title           = TFMM Einstellungen
@@ -64,15 +70,39 @@ update  = Eine neue Version von TFMM ist verfügbar.\nSoll die Homepage geöffne
 current = Keine Aktualisierung notwendig.
 failed  = Fehler bei der Abfrage.
 
+[updater]
+title         = Aktualisiere TFMM
+channel       = Veröffentlichungskanal
+check         = Prüfe auf neue Version
+download      = Herunterladen
+checking      = Prüfe auf neue Version...
+retrieved     = Versionsinformationen empfangen
+errorchannel  = Fehler: Kein Kanal gefunden
+errorjson     = JSON Fehler
+warningtesting  = Testversionen können Fehler enthalten
+current       = Benutzte Version
+information   = Versionsinformationen
+version       = Version:
+filename      = Dateiname:
+date          = Veröffentlichungsdatum:
+newversion    = Neue Version verfügbar
+nonewversion  = Keine neue Version verfügbar
+errordownload = Fehler bei der Abfrage
+
 [management]
-activate      = Aktiviere: {name}
-activate1     = Soll '{name}' aktiviert werden?
-activate2     = Sollen {count} Modifikationen aktiviert werden?
-deactivate    = Deaktiviere: {name}
-deactivate1   = Soll '{name}' deaktiviert werden?
-deactivate2   = Sollen {count} Modifikationen deaktiviert werden?
-uninstall1    = Soll '{name}' gelöscht werden?
-uninstall2    = Sollen {count} Modifikationen gelöscht werden?
+install       = Füge '{name}' zu Train Fever hinzu
+install1      = Soll '{name}' zu Train Fever hinzugefügt werden?
+install2      = Sollen {count} Modifikationen zu Train Fever hinzugefügt werden?
+remove        = Entferne '{name}' aus Train Fever
+remove1       = Soll '{name}' aus Train Fever entfernt werden?
+remove2       = Sollen {count} Modifikationen aus Train Fever entfernt werden?
+delete        = Lösche '{name}'
+delete1       = Soll '{name}' gelöscht werden?
+delete2       = Sollen {count} Modifikationen gelöscht werden?
+
+conflict_hash = Die Modifikation '{name}' wurde bereits installiert und zu Train Fever hinzugefügt.
+conflict_id   = Konflikt bei der Installation von '{new_name}':\nEs existiert bereits eine Modifikation mit der ID '{id}': '{old_name} v{old_version}'\nSoll '{old_name} v{old_version}' durch '{new_name} v{new_version}' ersetzt werden?
+
 select_mod    = Wähle Modifikation aus
 files_archive = Datei Archive
 files_all     = Alle Dateien
@@ -80,17 +110,19 @@ dependencies  = Prüfe Abhängigkeiten...
 loading       = Lade Modifikation...
 processing    = Verarbeite Datei '{file}'
 requires      = Diese Modifikation benötigt {name} {version}.\nAlle benötigten Modifikationen müssen installiert und aktiviert sein.
-required      = Diese Modifikation wird von {name} benötigt.\nSoll diese Modifikation auch deaktiviert werden?
+required      = Diese Modifikation wird von {name} benötigt.\nDiese Modifikation wird auch entfernt.
 overwrite     = {file} wurde bereits von {name} modifiziert.\nSoll die Datei überschrieben werden?
 error_tmpdir  = Fehler bei der Erstellung des temporären Verzeichnis.
-error_open    = Fehler beim öffnen der Modifikation.
-error_reading = Error reading extracted files.
+error_open    = Fehler beim Öffnen der Modifikation.
+error_reading = Fehler beim Lesen der entpackten Dateien.
 yes           = Ja
 no            = Nein
 yes_all       = Ja zu allen
 no_all        = Nein zu allen
 ok            = Okay
 
+export_list   = Exportiere Liste von Modifikationen
+overwrite_file = Soll die vorhandene Datei überschrieben werden?
 
 [information]
 name      = Name:
@@ -102,24 +134,46 @@ close     = Schließen
 change    = Anpassen
 save      = Speichern
 
-[category]
-tool                      = Tool
-pack                      = Mod-Pack
-vehicle	                  = Fahrzeug
-vehicle/bus               = Bus
-vehicle/tram              = Straßenbahn
-vehicle/train             = Zug
-vehicle/train/steam       = Dampflokomotive
-vehicle/train/diesel      = Diesellokomotive
-vehicle/train/electric    = Elektrolokomotive
-vehicle/train/railcar     = Triebwagen
-vehicle/wagon             = Waggon
-vehicle/wagon/passenger   =	Passagierwaggon
-vehicle/wagon/goods       = Güterwaggon
-building                  = Gebäude
-building/station          = Bahnhof
-building/deco             = Dekoration
-building/town             = Stadtgebäude
-building/depot            = Depot
-building/signal           = Signal / Wegpunkt
-other                     = anderes
+[tags]
+tool        = Tool
+pack        = Mod-Pack
+vehicle	    = Fahrzeug
+bus         = Bus
+tram        = Straßenbahn
+train       = Zug
+steam       = Dampflokomotive
+diesel      = Diesellokomotive
+electric    = Elektrolokomotive
+railcar     = Triebwagen
+wagon       = Waggon
+passenger   =	Passagierwaggon
+goods       = Güterwaggon
+building    = Gebäude
+station     = Bahnhof
+deco        = Dekoration
+town        = Stadtgebäude
+depot       = Depot
+signal      = Signal
+waypoint    = Wegpunkt
+towns       = Städtenamen
+streets     = Straßennamen
+costs       = Kosten
+sandbox     = Sandkasten
+other       = anderes
+
+[progress]
+title       = Fortschritt
+load        = Lade Bibliothek
+new         = Füge neue Modifikation hinzu
+install     = Installiere Modifikation
+remove      = Entferne Modifikation aus Train Fever
+delete      = Entferne Modifikation
+convert     = Konvertiere Modifikationen
+copy_lib    = Kopiere Modifikation in Bibliothek
+extract     = Entpacke Dateien
+
+[conversion]
+title       = Konvertierung
+start       = Seit dem 27. Februar 2015 benutzt Train Fever ein neues Modding System.\nTrain Fever erkennt nun die Modifikationen und diese können im Spiel für jeden Speicherstand einzeln verwaltet werden.\n\nSollen die Modifikationen jetzt in das neue Format umgewandelt werden?
+finish      = Die Umwandlung ist abgeschlossen.\n\nBitte lösche nun manuell den "res/" Ordner im Train Fever Verzeichnis\nund führe danach eine Verifizierung des lokalen Spielordners mittels Steam durch.\nHilfe dazu findest Du auf www.train-fever.net.
+legacy      = Um das alte Modding System zu nutzen, muss eine alte Version von TFMM verwendet werden.

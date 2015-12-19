@@ -1,218 +1,205 @@
 ﻿EnableExplicit
 
-#VERSION$ = "Version 0.6." + #PB_Editor_BuildCount + " Build " + #PB_Editor_CompileCount
-#DEBUG = #True
+DeclareModule main
+  EnableExplicit
+  
+  Global _DEBUG = #False
+  Global _TESTMODE = #False
+  Global TF$
+  Global ready
+  
+  Declare init()
+  Declare exit()
+  Declare loop()
+  
+EndDeclareModule
 
-Enumeration
-  #UpdateNew
-  #UpdateCurrent
-  #UpdateFailed
-EndEnumeration
-
-Global Event
-Global TF$, Ready
-
-Declare checkTFPath(Dir$)
-Declare checkUpdate(auto.i)
-Declare AddModToList(File$)
-
-XIncludeFile "Windows.pbi"
-XIncludeFile "module_registry.pbi"
-XIncludeFile "module_unrar.pbi"
-XIncludeFile "module_ListIcon.pbi"
+XIncludeFile "module_debugger.pbi"
+XIncludeFile "module_misc.pbi"
 XIncludeFile "module_images.pbi"
-XIncludeFile "module_mods.pbi"
 XIncludeFile "module_locale.pbi"
+XIncludeFile "module_windowMain.pbi"
+XIncludeFile "module_windowSettings.pbi"
+XIncludeFile "module_windowProgress.pbi"
+XIncludeFile "module_ListIcon.pbi"
+XIncludeFile "module_updater.pbi"
+XIncludeFile "module_queue.pbi"
+XIncludeFile "module_mods.pbi"
 
-CompilerIf #PB_Compiler_OS = #PB_OS_MacOS
-  MessageRequester("TFMM for Mac OS", "TFMM for Mac OS is still in Beta. Please use with caution!")
-CompilerEndIf
-
-Procedure exit(dummy)
-  Protected i.i
-  HideWindow(WindowMain, #True)
+Module main
   
-  FreeModList()
-  
-  OpenPreferences("TFMM.ini")
-  If ReadPreferenceInteger("windowlocation", #False)
-    PreferenceGroup("window")
-    WritePreferenceInteger("x", WindowX(WindowMain))
-    WritePreferenceInteger("y", WindowY(WindowMain))
-    WritePreferenceInteger("width", WindowWidth(WindowMain))
-    WritePreferenceInteger("height", WindowHeight(WindowMain))
-  EndIf
-  PreferenceGroup("columns")
-  For i = 0 To 5
-    WritePreferenceInteger(Str(i), GetGadgetItemAttribute(ListInstalled, #PB_Any, #PB_Explorer_ColumnWidth, i))
-  Next
-  ClosePreferences()
-  
-  End
-EndProcedure
-
-Procedure init()
-  If #DEBUG
-    debugger::SetLogFile("tfmm-output.txt")
-  EndIf
-  debugger::DeleteLogFile()
-  debugger::Add("init()")
-  If Not UseZipPacker()
-    debugger::Add("ERROR: UseZipPacker()")
-    MessageRequester("Error", "Could not initialize ZIP decompression.")
-    End
-  EndIf
-  If Not InitNetwork()
-    debugger::Add("ERROR: InitNetwork()")
-  EndIf
-  If Not UsePNGImageDecoder()
-    debugger::Add("ERROR: UsePNGImageDecoder()")
-    MessageRequester("Error", "Could not initialize PNG Decoder.")
-    End
-  EndIf
-  If Not UsePNGImageEncoder()
-    debugger::Add("ERROR: UsePNGImageEncoder()")
-    MessageRequester("Error", "Could not initialize PNG Encoder.")
-    End
-  EndIf
-  If Not UseJPEGImageDecoder()
-    debugger::Add("ERROR: UseJPEGImageDecoder()")
-    MessageRequester("Error", "Could not initialize JPEG Decoder.")
-    End
-  EndIf
-  
-  ;   SetCurrentDirectory(GetPathPart(ProgramFilename()))
-  CompilerIf #PB_Compiler_OS = #PB_OS_Linux
-    debugger::Add("CurrentDirectory = {"+GetCurrentDirectory()+"}")
-    misc::CreateDirectoryAll(misc::path(GetHomeDirectory()+"/.tfmm"))
-    SetCurrentDirectory(misc::path(GetHomeDirectory()+"/.tfmm"))
-    debugger::Add("CurrentDirectory = {"+GetCurrentDirectory()+"}")
-  CompilerEndIf
-  
-  images::LoadImages()
-  
-  OpenPreferences("TFMM.ini")
-  locale::use(ReadPreferenceString("locale","en"))
-  ClosePreferences()
-  
-  InitWindows() ; open and initialize windows
-  
-  debugger::Add("load settings")
-  OpenPreferences("TFMM.ini")
-  
-  TF$ = ReadPreferenceString("path", "")
-  
-  ; Window Location
-  If ReadPreferenceInteger("windowlocation", #False)
-    PreferenceGroup("window")
-    ResizeWindow(WindowMain,
-                 ReadPreferenceInteger("x", #PB_Ignore),
-                 ReadPreferenceInteger("y", #PB_Ignore),
-                 ReadPreferenceInteger("width", #PB_Ignore),
-                 ReadPreferenceInteger("height", #PB_Ignore))
-    PreferenceGroup("")
-  EndIf
-  
-  ; reload column sizing
-  Protected i.i
-  PreferenceGroup("columns")
-  For i = 0 To 5
-    If ReadPreferenceInteger(Str(i), 0)
-      SetGadgetItemAttribute(ListInstalled, #PB_Any, #PB_Explorer_ColumnWidth, ReadPreferenceInteger(Str(i), 0), i)
-      ; Sorting
-      ListIcon::SetColumnFlag(ListInstalled, i, ListIcon::#String) 
+  Procedure init()
+    Protected i
+    ; program parameter
+    For i = 0 To CountProgramParameters() - 1
+      Select LCase(ProgramParameter(i)) 
+        Case "-debug"
+          Debug "parameter: enable debug mode"
+          _DEBUG = #True
+        Case "-testmode"
+          Debug "parameter: enable testing mode"
+          _TESTMODE = #True
+        Default
+          Debug "unknown parameter: " + ProgramParameter(i)
+      EndSelect
+    Next
+    
+    debugger::DeleteLogFile()
+    If _DEBUG
+      debugger::SetLogFile("tfmm-output.txt")
     EndIf
-  Next
-  PreferenceGroup("")
-  
-  ; update
-  If ReadPreferenceInteger("update", 0)
-    CreateThread(@checkUpdate(), 1)
-  EndIf
-  
-  ClosePreferences()
-  
-  SetGadgetText(GadgetPath, TF$)
-  
-  If TF$ = ""
-    ; no path specified upon program start -> open settings dialog
-    MenuItemSettings(0)
-    GadgetButtonAutodetect(0)
-  EndIf
-  LoadModList()
-  
-  debugger::Add("init complete")
-EndProcedure
-
-init()
-
-Repeat
-  Event = WaitWindowEvent(100)
-  If Event = #PB_Event_Timer
-    Select EventTimer()
-      Case TimerSettingsGadgets
-        TimerSettingsGadgets()
-      Case TimerMainGadgets
-        TimerMain()
-      Case TimerFinishUnInstall
-        FinishDeActivate()
-      Case TimerUpdate
-        TimerUpdate()
-    EndSelect
-  EndIf
-  
-  If Event = #PB_Event_WindowDrop
-    If EventWindow() = WindowMain
-      HandleDroppedFiles(EventDropFiles())
+    
+    ;   SetCurrentDirectory(GetPathPart(ProgramFilename()))
+    CompilerIf #PB_Compiler_OS = #PB_OS_Linux
+      misc::CreateDirectoryAll(misc::path(GetHomeDirectory()+"/.tfmm"))
+      SetCurrentDirectory(misc::path(GetHomeDirectory()+"/.tfmm"))
+    CompilerEndIf
+    
+    debugger::Add("init() - load plugins")
+    If Not UseZipPacker()
+      debugger::Add("ERROR: UseZipPacker()")
+      MessageRequester("Error", "Could not initialize ZIP.")
+      End
     EndIf
-  EndIf
+    If Not InitNetwork()
+      debugger::Add("ERROR: InitNetwork()")
+    EndIf
+    If Not UsePNGImageDecoder()
+      debugger::Add("ERROR: UsePNGImageDecoder()")
+      MessageRequester("Error", "Could not initialize PNG Decoder.")
+      End
+    EndIf
+    If Not UsePNGImageEncoder()
+      debugger::Add("ERROR: UsePNGImageEncoder()")
+      MessageRequester("Error", "Could not initialize PNG Encoder.")
+      End
+    EndIf
+    If Not UseJPEGImageDecoder()
+      debugger::Add("ERROR: UseJPEGImageDecoder()")
+      MessageRequester("Error", "Could not initialize JPEG Decoder.")
+      End
+    EndIf
+    If Not UseTGAImageDecoder()
+      debugger::Add("ERROR: UseTGAImageDecoder()")
+      MessageRequester("Error", "Could not initialize TGA Decoder.")
+      End
+    EndIf
+    
+    
+    images::LoadImages()
+    
+    
+    debugger::Add("init() - read locale")
+    OpenPreferences("TFMM.ini")
+    locale::use(ReadPreferenceString("locale","en"))
+    ClosePreferences()
+    
+    ; open all windows
+    windowMain::create()
+    windowSettings::create(windowMain::id)
+    windowProgress::create(windowMain::id) ;OpenWindowProgress()
+    updater::create(windowMain::id)
+    
+    
+    
+    debugger::Add("init() - load settings")
+    OpenPreferences("TFMM.ini")
+    TF$ = ReadPreferenceString("path", "")
+    
+    ; Window Location
+    If ReadPreferenceInteger("windowlocation", #False)
+      PreferenceGroup("window")
+      ResizeWindow(windowMain::id,
+                   ReadPreferenceInteger("x", #PB_Ignore),
+                   ReadPreferenceInteger("y", #PB_Ignore),
+                   ReadPreferenceInteger("width", #PB_Ignore),
+                   ReadPreferenceInteger("height", #PB_Ignore))
+      PreferenceGroup("")
+      ; reload column sizing
+      PreferenceGroup("columns")
+      Protected Dim widths(5)
+      For i = 0 To 5
+        widths(i) = ReadPreferenceInteger(Str(i), 0)
+      Next
+      
+      PreferenceGroup("")
+    EndIf
+    
+    
+    ; update
+    debugger::Add("init() - start updater")
+    If ReadPreferenceInteger("update", 0)
+      CreateThread(updater::@checkUpdate(), 1)
+    EndIf
+    
+    ClosePreferences()
+    
+    If TF$ = ""
+      ; no path specified upon program start -> open settings dialog
+      windowSettings::show()
+    EndIf
+    
+    
+    If TF$ <> ""
+      ; load library
+      queue::add(queue::#QueueActionLoad)
+      
+      ; check for old TFMM configuration, trigger conversion if found
+      If FileSize(misc::Path(TF$ + "/TFMM/") + "mods.ini") >= 0
+        queue::add(queue::#QueueActionConvert, TF$)
+      EndIf
+    EndIf
+    
+    debugger::Add("init complete")
+  EndProcedure
   
-  Select EventWindow()
-    Case WindowMain
-      If Not WindowMain_Events(Event)
-        exit(0)
-      EndIf
-      If Event = #PB_Event_Menu
-        Select EventMenu()
-          Case #MenuItem_Activate
-            GadgetButtonActivate(#PB_EventType_LeftClick)
-          Case #MenuItem_Deactivate
-            GadgetButtonDeactivate(#PB_EventType_LeftClick)
-          Case #MenuItem_Uninstall
-            GadgetButtonUninstall(#PB_EventType_LeftClick)
-          Case #MenuItem_Information
-            GadgetButtonInformation(#PB_EventType_LeftClick)
-        EndSelect
-      EndIf
-    Case WindowSettings
-      If Not WindowSettings_Events(Event)
-        GadgetCloseSettings(0)
-      EndIf
-    Case WindowModProgress
-      If Not WindowModProgress_Events(Event)
-        ; user wants to close progress window -> no action, just wait for progress to finish
-      EndIf
-    Case WindowModInformation
-      If EventType() = #PB_EventType_LeftClick
-        ForEach InformationGadgetAuthor()
-          If EventGadget() = InformationGadgetAuthor()\display
-            If GetGadgetData(InformationGadgetAuthor()\display)
-              misc::openLink("http://www.train-fever.net/index.php/User/" + Str(GetGadgetData(InformationGadgetAuthor()\display)))
-            EndIf
-          EndIf
-        Next
-      EndIf
-      If IsWindow(WindowModInformation)
-        If Not WindowModInformation_Events(Event)
-          GadgetButtonInformationClose(#PB_EventType_LeftClick)
-        EndIf
-      EndIf
-  EndSelect
-ForEver
+  Procedure exit()
+    Protected i.i
+    HideWindow(windowMain::id, #True)
+    
+    mods::saveList()
+    mods::freeAll()
+    
+    OpenPreferences("TFMM.ini")
+    If ReadPreferenceInteger("windowlocation", #False)
+      PreferenceGroup("window")
+      WritePreferenceInteger("x", WindowX(windowMain::id))
+      WritePreferenceInteger("y", WindowY(windowMain::id))
+      WritePreferenceInteger("width", WindowWidth(windowMain::id))
+      WritePreferenceInteger("height", WindowHeight(windowMain::id))
+    EndIf
+    PreferenceGroup("columns")
+    For i = 0 To 5
+      WritePreferenceInteger(Str(i), windowMain::getColumnWidth(i))
+    Next
+    ClosePreferences()
+    
+    End
+  EndProcedure
+  
+  Procedure loop()
+    Protected event
+    Repeat
+      event = WaitWindowEvent(100)
+      
+      Select EventWindow()
+        Case windowMain::id
+          windowMain::events(event)
+        Case windowSettings::window
+          windowSettings::events(event)
+        Case windowProgress::id
+          windowProgress::events(event)
+        Case windowInformation::id
+          windowInformation::events(event)
+        Case updater::window
+          updater::windowEvents(Event)
+      EndSelect
+    ForEver
+  EndProcedure
+  
+EndModule
+
+
+main::init()
+main::loop()
 End
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 116
-; FirstLine = 67
-; Folding = 9
-; EnableUnicode
-; EnableXP
